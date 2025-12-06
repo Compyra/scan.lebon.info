@@ -56,11 +56,13 @@
                 <div class="section">
                     <h2>Guess Local IP Range</h2>
                     <div class="info-box">
-                        <p class="info-text">Scan common private IP ranges to detect your network gateway. This will check .1 addresses across each range. Momenteel wacht het 50ms tussen elke scan, dit geeft meer garantie op een antwoord.</p>
+                        <p class="info-text">Scan common private IP ranges to detect your network gateway. This will check .1 addresses across each range.</p>
+                        <p class="info-text">Momenteel wacht het 50ms tussen elke scan, dit geeft meer garantie op een antwoord.</p>
+                        <p class="info-text">Alleen 192.168 range is afgewerkt, de twee andere nog niet.</p>
                         <div class="range-buttons">
                             <button id="scan192Btn" class="btn-range" onclick="scanIPRange('192.168')">Scan 192.168.0.0/16</button>
-                            <button id="scan172Btn" class="btn-range" onclick="scanIPRange('172.16')">Scan 172.16.0.0/12</button>
-                            <button id="scan10Btn" class="btn-range" onclick="scanIPRange('10.0')">Scan 10.0.0.0/8</button>
+                            <button id="scan172Btn" class="btn-range" onclick="scanIPRange('172.16')" disabled>Scan 172.16.0.0/12</button>
+                            <button id="scan10Btn" class="btn-range" onclick="scanIPRange('10.0')" disabled>Scan 10.0.0.0/8</button>
                         </div>
                         <div id="rangeTimeEstimate" class="range-time-estimate"></div>
                         <div id="rangeResults" class="range-results"></div>

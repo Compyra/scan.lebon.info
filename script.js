@@ -128,9 +128,11 @@ async function scanIP(ip, timeout) {
     const protocols = ['https', 'http'];
     
     for (const protocol of protocols) {
+        const protocolStartTime = Date.now();
+        let timeoutId;
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), timeout);
+            timeoutId = setTimeout(() => controller.abort(), timeout);
             
             // Start the fetch request
             const fetchPromise = fetch(`${protocol}://${ip}/`, {
@@ -150,13 +152,19 @@ async function scanIP(ip, timeout) {
             const responseTime = Date.now() - startTime;
             
             // If we got any response (even opaque), the host is active
+            console.log(`${ip} is active via ${protocol}, responseTime: ${responseTime}ms`);
             return { ip, active: true, responseTime, protocol };
         } catch (error) {
+            if (timeoutId) clearTimeout(timeoutId);
+            const protocolElapsed = Date.now() - protocolStartTime;
+            
             // Wait minimum time even on error to avoid false negatives
-            const elapsed = Date.now() - startTime;
-            if (elapsed < 50) {
-                await new Promise(resolve => setTimeout(resolve, 50 - elapsed));
+            if (protocolElapsed < 50) {
+                await new Promise(resolve => setTimeout(resolve, 50 - protocolElapsed));
             }
+            
+            // Log the error for debugging
+            console.log(`${ip} ${protocol} failed: ${error.name} after ${protocolElapsed}ms`);
             
             // Continue to next protocol or return inactive
             if (error.name === 'AbortError') {
@@ -169,6 +177,7 @@ async function scanIP(ip, timeout) {
     }
     
     // If both protocols failed, host is inactive
+    console.log(`${ip} is inactive (both protocols failed)`);
     return { ip, active: false };
 }
 
@@ -340,6 +349,7 @@ async function getHostInfo(ip) {
         }
     })();
 
+    console.log(`${ip} HTTP check result:`, httpResult);
     if (httpResult.accessible) {
         info.ports.http = true;
         info.httpStatus = httpResult.status;
@@ -421,6 +431,7 @@ async function getHostInfo(ip) {
         }
     })();
 
+    console.log(`${ip} HTTPS check result:`, httpsResult);
     if (httpsResult.accessible) {
         info.ports.https = true;
         info.httpsStatus = httpsResult.status;
@@ -433,6 +444,7 @@ async function getHostInfo(ip) {
         info.httpsDetails = httpsResult.details || 'Connection failed';
     }
 
+    console.log(`getHostInfo result for ${ip}:`, info);
     return info;
 }
 
