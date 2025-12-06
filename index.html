@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Scanner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Local Network Scanner</h1>
+            <button id="infoBtn" class="info-btn" title="About this scanner">ℹ</button>
+        </div>
+        
+        <!-- Info Modal -->
+        <div id="infoModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>About Network Scanner</h2>
+                <p>This tool helps you discover active devices on your local network by scanning IP addresses and testing their HTTP/HTTPS connectivity.</p>
+                
+                <h3>Features:</h3>
+                <ul>
+                    <li><strong>IP Range Detection:</strong> Automatically find your network's gateway by scanning common private IP ranges (192.168.x.x, 172.16.x.x, 10.x.x.x)</li>
+                    <li><strong>Network Scanning:</strong> Scan a custom range of IP addresses to discover active hosts</li>
+                    <li><strong>Detailed Error Information:</strong> See specific connection errors (timeouts, SSL issues, CORS blocks, connection refused)</li>
+                    <li><strong>Auto-repeat Mode:</strong> Continuously monitor your network for changes</li>
+                </ul>
+                
+                <h3>How to Use:</h3>
+                <ol>
+                    <li>Click one of the "Scan" buttons to detect your network range, or manually enter your network base</li>
+                    <li>Adjust the IP range and timeout if needed</li>
+                    <li>Click "Start Scan" to discover active devices</li>
+                    <li>View detailed information about each host including response codes and connection errors</li>
+                </ol>
+                
+                <h3>Understanding Results:</h3>
+                <ul>
+                    <li><span class="status-ok">Green:</span> Successful connection</li>
+                    <li><span class="error-cors">Purple:</span> CORS policy blocked (server responded but browser blocked details)</li>
+                    <li><span class="error-timeout">Orange:</span> Connection timed out</li>
+                    <li><span class="error-cert">Red:</span> SSL/Certificate error</li>
+                    <li><span class="error-refused">Dark Orange:</span> Connection refused (nothing listening on port)</li>
+                </ul>
+                
+                <p class="info-note"><strong>Note:</strong> This scanner runs entirely in your browser and uses browser security features. Some devices may not be detected due to CORS policies or firewall settings.</p>
+            </div>
+        </div>
+        
+        <div class="main-layout">
+            <div class="left-panel">
+                <div class="section">
+                    <h2>Guess Local IP Range</h2>
+                    <div class="info-box">
+                        <p class="info-text">Scan common private IP ranges to detect your network gateway. This will check .1 addresses across each range. Momenteel wacht het 50ms tussen elke scan, dit geeft meer garantie op een antwoord.</p>
+                        <div class="range-buttons">
+                            <button id="scan192Btn" class="btn-range" onclick="scanIPRange('192.168')">Scan 192.168.0.0/16</button>
+                            <button id="scan172Btn" class="btn-range" onclick="scanIPRange('172.16')">Scan 172.16.0.0/12</button>
+                            <button id="scan10Btn" class="btn-range" onclick="scanIPRange('10.0')">Scan 10.0.0.0/8</button>
+                        </div>
+                        <div id="rangeTimeEstimate" class="range-time-estimate"></div>
+                        <div id="rangeResults" class="range-results"></div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Network Scan</h2>
+                    <div class="scan-controls">
+                        <div class="input-group">
+                            <label for="networkBase">Network Base (e.g., 192.168.1):</label>
+                            <input type="text" id="networkBase" placeholder="192.168.1">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="startRange">Start IP:</label>
+                            <input type="number" id="startRange" min="1" max="254" value="1">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="endRange">End IP:</label>
+                            <input type="number" id="endRange" min="1" max="254" value="254">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="timeout">Timeout (ms):</label>
+                            <input type="number" id="timeout" min="100" max="5000" value="1000" step="100">
+                        </div>
+                        
+                        <div class="input-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="autoRepeat">
+                                <span>Auto-repeat scanning (updates every 10s)</span>
+                            </label>
+                        </div>
+                        
+                        <button id="scanBtn" class="btn-primary">Start Scan</button>
+                        <button id="stopBtn" class="btn-secondary" disabled>Stop Scan</button>
+                        <button id="clearBtn" class="btn-secondary" disabled>Clear Results</button>
+                        <p id="timeEstimate" class="time-estimate">Estimated duration: —</p>
+                    </div>
+                    
+                    <div class="progress-container" id="progressContainer" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <p class="progress-text" id="progressText">Scanning: 0/254</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="section">
+                    <h2>Scan Results</h2>
+                    <div class="results-summary" id="resultsSummary">
+                        <span>Active Hosts: <strong id="activeCount">0</strong></span>
+                        <span>Scanned: <strong id="scannedCount">0</strong></span>
+                    </div>
+                    <div id="results" class="results-box">
+                        <p class="placeholder">No scan results yet. Start a scan to discover devices on your network.</p>
+                    </div>
+                    <button id="exportBtn" class="btn-secondary" style="display: none;">Export Results</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
