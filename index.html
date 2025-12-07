@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Network Scanner</title>
+    <title>Network Website Scanner</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Local Network Scanner</h1>
+            <h1>Local Network Website Scanner</h1>
             <button id="infoBtn" class="info-btn" title="About this scanner">ℹ</button>
         </div>
         
@@ -104,13 +104,13 @@
                         <button id="stopBtn" class="btn-secondary" disabled>Stop Scan</button>
                         <button id="clearBtn" class="btn-secondary" disabled>Clear Results</button>
                         <p id="timeEstimate" class="time-estimate">Estimated duration: —</p>
-                    </div>
-                    
-                    <div class="progress-container" id="progressContainer" style="display: none;">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill"></div>
+                        
+                        <div class="progress-container" id="progressContainer" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                                <p class="progress-text" id="progressText">Scanning: 0/254</p>
+                            </div>
                         </div>
-                        <p class="progress-text" id="progressText">Scanning: 0/254</p>
                     </div>
                 </div>
             </div>

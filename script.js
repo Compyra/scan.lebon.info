@@ -4,6 +4,7 @@ let scannedCount = 0;
 let autoRepeatInterval = null;
 let hostsMap = new Map();
 let rangeScanActive = false;
+let responseCodesVisible = false;
 
 // Detect if we're running on HTTPS (which blocks HTTP requests due to mixed content)
 const isHttpsPage = window.location.protocol === 'https:';
@@ -675,6 +676,18 @@ function getErrorClass(error) {
 function updateResults() {
     const activeHosts = Array.from(hostsMap.values());
     
+    // Sort by IP address numerically
+    activeHosts.sort((a, b) => {
+        const partsA = a.ip.split('.').map(Number);
+        const partsB = b.ip.split('.').map(Number);
+        for (let i = 0; i < 4; i++) {
+            if (partsA[i] !== partsB[i]) {
+                return partsA[i] - partsB[i];
+            }
+        }
+        return 0;
+    });
+    
     document.getElementById('activeCount').textContent = activeHosts.length;
     document.getElementById('scannedCount').textContent = scannedCount;
 
@@ -735,7 +748,7 @@ function updateResults() {
                         <div class="meta-info">First: ${firstSeen}</div>
                         <div class="meta-info">Last: ${lastSeen}</div>
                     </td>
-                    <td>${responseHTML}</td>
+                    <td class="response-codes-column" style="display: ${responseCodesVisible ? '' : 'none'};">${responseHTML}</td>
                     <td>
                         <div class="port-buttons compact">
                             <button class="port-btn ${host.ports?.http ? 'port-open' : 'port-unknown'}" 
@@ -754,14 +767,21 @@ function updateResults() {
             `;
         }).join('');
 
+        const displayStyle = responseCodesVisible ? '' : 'none';
+        const buttonOpacity = responseCodesVisible ? '1' : '0.5';
+        const buttonTitle = responseCodesVisible ? 'Hide Response Codes' : 'Show Response Codes';
+        
         resultsDiv.innerHTML = `
             <table class="results-table">
                 <thead>
                     <tr>
                         <th>Host</th>
                         <th>Seen</th>
-                        <th>Response Codes</th>
-                        <th>Actions</th>
+                        <th class="response-codes-column" style="display: ${displayStyle};">Response Codes</th>
+                        <th>
+                            <button class="toggle-codes-btn" onclick="toggleResponseCodes(this)" title="${buttonTitle}" style="opacity: ${buttonOpacity};">📊</button>
+                            Actions
+                        </th>
                     </tr>
                 </thead>
                 <tbody>${rowsHTML}</tbody>
@@ -884,3 +904,17 @@ document.addEventListener('DOMContentLoaded', () => {
     renderRangeTimeEstimates();
     updateTimeEstimate();
 });
+
+// Toggle response codes visibility
+function toggleResponseCodes(button) {
+    responseCodesVisible = !responseCodesVisible;
+    
+    const columns = document.querySelectorAll('.response-codes-column');
+    columns.forEach(col => {
+        col.style.display = responseCodesVisible ? '' : 'none';
+    });
+    
+    // Update button appearance
+    button.style.opacity = responseCodesVisible ? '1' : '0.5';
+    button.title = responseCodesVisible ? 'Hide Response Codes' : 'Show Response Codes';
+}
