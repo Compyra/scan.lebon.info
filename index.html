@@ -17,7 +17,7 @@
         <div id="infoModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
-                <h2>About Network Scanner</h2>
+                <h2>About this Network Website Scanner</h2>
                 <p>This tool helps you discover active devices on your local network by scanning IP addresses and testing their HTTP/HTTPS connectivity.</p>
                 
                 <h3>Features:</h3>
@@ -26,6 +26,7 @@
                     <li><strong>Network Scanning:</strong> Scan a custom range of IP addresses to discover active hosts</li>
                     <li><strong>Ports:</strong> Specifically for ports 80 and 443</li>
                     <li><strong>Detailed Error Information:</strong> See specific connection errors (timeouts, SSL issues, CORS blocks, connection refused)</li>
+                    <li><strong>Detailed Error Information:</strong> New secure browsers tend to block this information, this is where the "CORS" issue comes into play.</li>
                     <li><strong>Auto-repeat Mode:</strong> Continuously monitor your network for changes</li>
                 </ul>
                 
@@ -49,6 +50,7 @@
             -->    </ul>
              
                 <p class="info-note"><strong>Note:</strong> This scanner runs entirely in your browser and uses browser security features. Some devices may not be detected due to CORS policies or firewall settings.</p>
+                <p class="info-note"><strong>Note:</strong> If port 80 has a 302 (redirect) to port 443 and port 443 is closed, it may (sometimes) not show up in the scans, you can catch this in the console/network in your browser.</p>
             </div>
         </div>
         
