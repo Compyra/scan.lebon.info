@@ -74,6 +74,15 @@ h1 {
     transform: rotate(180deg);
 }
 
+.header .info-btn:first-child {
+    left: 0;
+    right: auto;
+}
+
+.header .info-btn:first-child:hover {
+    transform: scale(1.1);
+}
+
 /* HTTPS Warning */
 .https-warning {
     background: var(--terminal-section);
